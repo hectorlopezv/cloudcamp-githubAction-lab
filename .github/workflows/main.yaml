@@ -34,4 +34,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image
-      run: docker build . --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:1.0.0-beta.1
+      run: docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:1.0.0-beta.1
