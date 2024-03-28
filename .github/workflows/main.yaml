@@ -8,7 +8,7 @@ on:
   # pull_request:
   #   branches: [ "main" ]
 env: 
-  repoUrl: ${{ DOCKERHUB_REPO }}
+  repoUrl: ${{ vars.DOCKERHUB_REPO }}
   tag: "1.0.0-beta.1"
 
 jobs:
