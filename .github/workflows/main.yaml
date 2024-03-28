@@ -30,11 +30,12 @@ jobs:
         docker tag $repoUrl:1.0.0-beta.1 $repoUrl:latest
 
     - name: Docker Hub Login
+      run: |
+        docker login -u $username -p $password
       with: 
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
-      run: |
-        docker login -u $username -p $password
+
 
     - name: Push Docker Image
       run: | 
