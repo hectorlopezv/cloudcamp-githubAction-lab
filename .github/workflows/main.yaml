@@ -1,5 +1,5 @@
 
-name: Build and Publish Docker Image CI
+name: Build and Publish Docker Image
 
 on:
   push:
@@ -8,30 +8,34 @@ on:
   # pull_request:
   #   branches: [ "main" ]
 env: 
-  repoUrl: ${{ env.DOCKERHUB_REPO }}
+  repoUrl: ${{ DOCKERHUB_REPO }}
   tag: "1.0.0-beta.1"
 
 jobs:
 
-  build:
+  CI-DOCKER-IMAGE:
 
     runs-on: ubuntu-latest
     environment: dv
     steps:
     - name: Check out repository code
       uses: actions/checkout@v3
+
     - name: Build  Docker image
       run: docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:$tag
+
     - name: Tag Docker Image
       run: |
         docker tag  hello-world-nodejs-app:$tag $repoUrl:$tag
         docker tag $repoUrl:1.0.0-beta.1 $repoUrl:latest
+
     - name: Docker Hub Login
       with: 
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       run: |
         docker login -u $username -p $password
+
     - name: Push Docker Image
       run: | 
         docker push $repoUrl:$tag
