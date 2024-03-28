@@ -18,7 +18,7 @@ jobs:
   CI-DOCKER-IMAGE:
 
     runs-on: ubuntu-latest
-    environment: dv
+    # environment: dv
     steps:
     - name: Check out repository code
       uses: actions/checkout@v3
