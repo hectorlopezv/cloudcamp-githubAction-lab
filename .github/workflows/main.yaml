@@ -2,34 +2,44 @@
 name: Build and Publish Docker Image
 
 on:
-  push:
-    branches: [ "main" ]
+  # push:
+  #   branches: [ "main" ]
   workflow_dispatch:
+    inputs:
+      appversion:
+        description: "Enter App Version, example:  1.0.0-beta.1"
+        required: True
   # pull_request:
   #   branches: [ "main" ]
 env: 
   repoUrl: ${{ vars.DOCKERHUB_REPO }}
   username: ${{ secrets.DOCKERHUB_USERNAME }}
   password: ${{ secrets.DOCKERHUB_TOKEN }}
-  tag: "1.0.0-beta.1"
+  # tag: "1.0.0-beta.1"
 
 jobs:
 
-  CI-DOCKER-IMAGE:
-
+  checkout:
     runs-on: ubuntu-latest
-    environment: dv
     steps:
     - name: Check out repository code
       uses: actions/checkout@v3
 
+  build:
+    runs-on: ubuntu-latest
+    steps: 
     - name: Build  Docker image
-      run: docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:$tag
+      run: docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:"${{ github.event.inputs.appversion }}"
+
+  push:
+    runs-on: ubuntu-latest
+    environment: dv
+    steps:
 
     - name: Tag Docker Image
       run: |
-        docker tag  hello-world-nodejs-app:$tag $repoUrl:$tag
-        docker tag $repoUrl:1.0.0-beta.1 $repoUrl:latest
+        docker tag  hello-world-nodejs-app:$tag $repoUrl:"${{ github.event.inputs.appversion }}"
+        docker tag $repoUrl:"${{ github.event.inputs.appversion }}" $repoUrl:latest
 
     - name: Docker Hub Login
       run: |
