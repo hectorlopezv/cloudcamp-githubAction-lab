@@ -21,20 +21,13 @@ jobs:
 
   checkout:
     runs-on: ubuntu-latest
+    environment: dv
     steps:
     - name: Check out repository code
       uses: actions/checkout@v3
 
-  build:
-    runs-on: ubuntu-latest
-    steps: 
     - name: Build  Docker image
       run: docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:"${{ github.event.inputs.appversion }}"
-
-  push:
-    runs-on: ubuntu-latest
-    environment: dv
-    steps:
 
     - name: Tag Docker Image
       run: |
