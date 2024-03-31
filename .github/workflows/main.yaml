@@ -15,11 +15,11 @@ env:
   repoUrl: ${{ vars.DOCKERHUB_REPO }}
   username: ${{ secrets.DOCKERHUB_USERNAME }}
   password: ${{ secrets.DOCKERHUB_TOKEN }}
-  tag: ${{ inputs.environment }}
+  tag: ${{ inputs.appversion }}
 
 jobs:
 
-  checkout:
+  checkout-build-push-docker-image:
     runs-on: ubuntu-latest
     environment: dv
     steps:
