@@ -18,7 +18,7 @@ jobs:
       - name: audit app
         run: cd _scm_docker_nodejs_app/ &&  npm audit > ../audit.log || exit 0 
       - name: Comment PR
-        if: github.event.name == 'pull_request'
+        if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
           filePath: ./audit.log
