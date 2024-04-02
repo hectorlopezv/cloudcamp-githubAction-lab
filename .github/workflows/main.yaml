@@ -1,45 +1,31 @@
-
-name: Build and Publish Docker Image
-
-on:
-  # push:
-  #   branches: [ "main" ]
+name: GitHub Actions Demo Bootcamp CICD
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: 
   workflow_dispatch:
-    inputs:
-      appversion:
-        description: "Enter App Version, example:  1.0.0-beta.1"
-        required: True
-  # pull_request:
-  #   branches: [ "main" ]
-env: 
-  repoUrl: ${{ vars.DOCKERHUB_REPO }}
-  username: ${{ secrets.DOCKERHUB_USERNAME }}
-  password: ${{ secrets.DOCKERHUB_TOKEN }}
-  tag: ${{ inputs.appversion }}
-
 jobs:
-
-  checkout-build-push-docker-image:
+  audit:
     runs-on: ubuntu-latest
-    environment: dv
     steps:
-    - name: Check out repository code
-      uses: actions/checkout@v3
-
-    - name: Build  Docker image
-      run: docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:$tag
-
-    - name: Tag Docker Image
-      run: |
-        docker tag  hello-world-nodejs-app:$tag $repoUrl:$tag
-        docker tag $repoUrl:$tag $repoUrl:latest
-
-    - name: Docker Hub Login
-      run: |
-        docker login -u $username -p $password
-
-    - name: Push Docker Image
-      run: | 
-        docker push --all-tags $repoUrl
-
-
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - run: npm audit || exit 0
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - run: npm test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - name: Build  Docker image
+        run: |
+          docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:1.0.0
