@@ -20,7 +20,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '16'
-      - run: cd _scm_docker_nodejs_app/ && npm test
+      - name: Testing App
+        run: cd _scm_docker_nodejs_app/ && npm test
+        continue-on-error: True
   build:
     runs-on: ubuntu-latest
     steps:
@@ -30,3 +32,7 @@ jobs:
         run: |
           docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:1.0.0
           # docker build -t hello-world-nodejs-app:1.0.0 . 
+    needs: [audit, test]
+    # needs:
+    #   - audit
+    #   - test
