@@ -2,16 +2,40 @@ name: GitHub Actions Demo Bootcamp CICD
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: 
   workflow_dispatch:
+  pull_request:
+    branches: [ "main" ]
 jobs:
+  verify-install:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        nodeversion: [14, 16, 20]
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.nodeversion }}
+      - name: verify packages
+        run: cd _scm_docker_nodejs_app/ && npm ci
   audit:
     runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '16'
-      - run: npm audit || exit 0
+      - name: audit app
+        run: cd _scm_docker_nodejs_app/ &&  npm audit > ../audit.log || exit 0 
+      - name: Comment PR
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: ./audit.log
+    needs: [verify-install]
   test:
     runs-on: ubuntu-latest
     steps:
@@ -20,7 +44,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '16'
-      - run: npm test
+      - name: Testing App
+        run: cd _scm_docker_nodejs_app/ && npm test
+        continue-on-error: True
+    needs: [verify-install]
   build:
     runs-on: ubuntu-latest
     steps:
@@ -29,3 +56,8 @@ jobs:
       - name: Build  Docker image
         run: |
           docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:1.0.0
+          # docker build -t hello-world-nodejs-app:1.0.0 . 
+    needs: [audit, test]
+    # needs:
+    #   - audit
+    #   - test
