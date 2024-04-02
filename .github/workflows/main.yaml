@@ -30,6 +30,11 @@ jobs:
           node-version: '16'
       - name: audit app
         run: cd _scm_docker_nodejs_app/ &&  npm audit > ../audit.log || exit 0 
+      - name: Save audit repository
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: audit-report
+          path: ./audit.log
       - name: Comment PR
         if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
