@@ -18,6 +18,7 @@ jobs:
           node-version: ${{ matrix.nodeversion }}
       - name: verify packages
         run: cd _scm_docker_nodejs_app/ && npm ci
+
   audit:
     runs-on: ubuntu-latest
     permissions:
@@ -30,17 +31,32 @@ jobs:
           node-version: '16'
       - name: audit app
         run: cd _scm_docker_nodejs_app/ &&  npm audit > ../audit.log || exit 0 
-      - name: Save audit repository
+      - name: upload audit report
         uses: actions/upload-artifact@v4.3.1
         with:
           name: audit-report
           path: ./audit.log
+    needs: [verify-install]
+
+  audit-report:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: download  audit report
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: audit-report
       - name: Comment PR
         if: github.event_name == 'pull_request'
         uses: thollander/actions-comment-pull-request@v2
         with:
           filePath: ./audit.log
-    needs: [verify-install]
+      - name: Print audit report on console
+        run: cat ./audit.log
+    needs: [audit]
+
+
   test:
     runs-on: ubuntu-latest
     steps:
