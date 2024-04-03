@@ -91,13 +91,14 @@ jobs:
           registry: ghcr.io
           username: ${{ env.DOCKER_USER }}
           password: ${{ secrets.GITHUB_TOKEN }}
+      - run: echo "LC_GITHUB_REPOSITORY=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
       - name: Build  Docker image
         run: |
-          docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag ghcr.io/$DOCKER_USER/$GITHUB_REPOSITORY/dummy:1.0.0
+          docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag ghcr.io/$LC_GITHUB_REPOSITORY/dummy:1.0.0
           # docker build -t hello-world-nodejs-app:1.0.0 . 
       - name: Push Docker Image
         run: | 
-          docker push ghcr.io/$DOCKER_USER/$GITHUB_REPOSITORY/dummy:1.0.0
+          docker push ghcr.io/$LC_GITHUB_REPOSITORY/dummy:1.0.0
     needs: [audit, test]
     # needs:
     #   - audit
