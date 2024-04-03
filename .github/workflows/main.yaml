@@ -23,6 +23,8 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
+    outputs:
+      audit-report-ouput: ${{ steps.auditapp.ouputs.auditoutput }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
@@ -31,6 +33,11 @@ jobs:
           node-version: '16'
       - name: audit app
         run: cd _scm_docker_nodejs_app/ &&  npm audit > ../audit.log || exit 0 
+      - id: auditapp 
+        run: |
+         value=$(cat ./audit.log)
+         echo "audit-report=$value" >> "$GIHUB_OUTPUT"
+         echo $GIHUB_OUTPUT
       - name: upload audit report
         uses: actions/upload-artifact@v4.3.1
         with:
