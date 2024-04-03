@@ -36,9 +36,8 @@ jobs:
       - id: auditapp 
         run: |
          value=$(cat audit.log)
-         echo $value
-         #echo "audit-report=$value" >> "$GIHUB_OUTPUT"
-         #echo $GIHUB_OUTPUT
+         echo "audit-report=$value" >> "$GIHUB_OUTPUT"
+         echo $GIHUB_OUTPUT
       - name: upload audit report
         uses: actions/upload-artifact@v4.3.1
         with:
