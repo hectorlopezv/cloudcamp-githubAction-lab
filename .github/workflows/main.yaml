@@ -77,16 +77,27 @@ jobs:
       - name: Testing App
         run: cd _scm_docker_nodejs_app/ && npm test
         continue-on-error: True
-    needs: [verify-install]
+    needs: [verify-install]  
   build:
     runs-on: ubuntu-latest
+    env:
+      DOCKER_USER: ${{ github.actor }}
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
+      - name: Login to Github Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ env.DOCKER_USER }}
+          password: ${{ secrets.GITHUB_TOKEN }}
       - name: Build  Docker image
         run: |
-          docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag hello-world-nodejs-app:1.0.0
+          docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag ghcr.io/$DOCKER_USER/$GITHUB_REPOSITORY/dummy:1.0.0
           # docker build -t hello-world-nodejs-app:1.0.0 . 
+      - name: Push Docker Image
+        run: | 
+          docker push ghcr.io/$DOCKER_USER/$GITHUB_REPOSITORY/dummy:1.0.0
     needs: [audit, test]
     # needs:
     #   - audit
