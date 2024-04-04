@@ -1,18 +1,18 @@
 #!/bin/bash
 
 inputpath=$1
-message="ALL GOOD!"
+
 
 check= $(cat "$inputpath" | grep -iE 'moderate|critical')
+echo $check
 # check=$( echo "$inputpath" | grep -iE 'moderate|critical')
 
 
-if [[ "$check" ]]
-
-then
-
+if [[ -z "$check" ]]; then
+message="ALL GOOD!"
+else
 message="ALERT!"
-
 fi
 
+echo $message
 echo "sum-audit=$message" >> $GITHUB_OUTPUT
