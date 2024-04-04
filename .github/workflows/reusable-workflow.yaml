@@ -36,11 +36,16 @@ jobs:
         uses: actions/download-artifact@v4.1.4
         with:
           name: audit-report
-      - name: Comment PR
-        if: github.event_name == 'pull_request'
-        uses: thollander/actions-comment-pull-request@v2
+      - id: customAction
+        name: call custom action
+        uses: ./.github/actions
         with:
-          filePath: ./audit.log
+          report: ./audit.log
+      # - name: Comment PR
+      #   if: github.event_name == 'pull_request'
+      #   uses: thollander/actions-comment-pull-request@v2
+      #   with:
+      #     filePath: ./audit.log
       - name: Print audit report on console
-        run: cat ./audit.log
+        run: echo ${{ steps.customAction.outputs.sum-audit }}
     needs: [audit]
