@@ -1,0 +1,19 @@
+name: Check Audit report
+description: "Analize and summarize audit report"
+inputs:
+  report:
+    description: "get file with the audit report"
+    required: true
+outputs:
+  sum-audit:
+    description: "print information about report"
+runs:
+  using: composite
+  steps:
+    - name: give information 
+      # run: bash my-custom-action.sh "${{ inputs.report }}"
+      run: ls
+      shell: bash
+
+
+
