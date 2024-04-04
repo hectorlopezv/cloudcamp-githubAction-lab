@@ -22,6 +22,8 @@ jobs:
         run: cd _scm_docker_nodejs_app/ && npm ci
 
   audit:
+    permissions:
+      pull-requests: write
     uses: ./.github/workflows/reusable-workflow.yaml
     needs: [verify-install]
 

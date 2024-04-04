@@ -26,8 +26,6 @@ jobs:
 
   audit-report:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: download  audit report
         uses: actions/download-artifact@v4.1.4
