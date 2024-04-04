@@ -2,6 +2,11 @@ name: GitHub Actions Demo Bootcamp CICD
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: 
   workflow_dispatch:
+    inputs:
+      enable-audit-report:
+        description: "Enable or disable audit report"
+        type: boolean
+
   pull_request:
     branches: [ "main" ]
 jobs:
@@ -25,7 +30,10 @@ jobs:
     permissions:
       pull-requests: write
     uses: ./.github/workflows/reusable-workflow.yaml
+    with:
+      enable-report: ${{ inputs.enable-audit-report }}
     needs: [verify-install]
+
 
   test:
     runs-on: ubuntu-latest
