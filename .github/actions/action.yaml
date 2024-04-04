@@ -11,7 +11,8 @@ runs:
   using: composite
   steps:
     - name: give information 
-      run: ./my-custom-action.sh ${{ inputs.report }}
+      # run: bash my-custom-action.sh "${{ inputs.report }}"
+      run: ls
       shell: bash
 
 
