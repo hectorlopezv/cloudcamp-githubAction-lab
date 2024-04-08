@@ -10,6 +10,7 @@ on:
   pull_request:
     branches: [ "main" ]
 jobs:
+### JOB TO VERIFY PACKAGES, determine the project's package versions and dependencies
   verify-install:
     runs-on: ubuntu-latest
     strategy:
@@ -26,6 +27,7 @@ jobs:
       - name: verify packages
         run: cd _scm_docker_nodejs_app/ && npm ci
 
+### IMPORT REUSABLE WORKFLOW
   audit:
     permissions:
       pull-requests: write
@@ -34,7 +36,7 @@ jobs:
       enable-report: ${{ inputs.enable-audit-report }}
     needs: [verify-install]
 
-
+### RUN NPM TEST
   test:
     runs-on: ubuntu-latest
     steps:
@@ -42,11 +44,13 @@ jobs:
         uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '16'
+          node-version: '14'
       - name: Testing App
         run: cd _scm_docker_nodejs_app/ && npm test
         continue-on-error: True
     needs: [verify-install]  
+
+### WORKFLOW TO BUILD AND PUSH DOCKER IMAGE
   build:
     runs-on: ubuntu-latest
     permissions: 

@@ -10,6 +10,8 @@ on:
   # pull_request:
   #   branches: [ "main" ]
 jobs:
+
+### NPM AUDIT TO KNOW VULNURABILITYS AND UPLOAD THE REPORT AS A ARTIFACT
   audit:
     runs-on: ubuntu-latest
     permissions:
@@ -28,6 +30,7 @@ jobs:
           name: audit-report
           path: ./audit.log
 
+### CHECK AUDIT REPORT, CALL CUSTOMIZED ACTION
   audit-report:
     runs-on: ubuntu-latest
     if: inputs.enable-report
