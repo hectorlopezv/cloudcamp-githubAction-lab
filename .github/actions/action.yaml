@@ -6,12 +6,13 @@ inputs:
     required: true
 outputs:
   sum-audit:
+    value: ""
     description: "print information about report"
 runs:
   using: composite
   steps:
     - name: give information 
-      run: ./my-custom-action.sh "${{ inputs.report }}"
+      run: sh my-custom-action.sh "${{ inputs.report }}"
       # run: ls
       shell: bash
 
