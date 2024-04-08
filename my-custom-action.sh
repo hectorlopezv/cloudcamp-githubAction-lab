@@ -6,7 +6,7 @@ echo $auditOutput
 
 summary=":white_check_mark: All Good! No critical or moderate vulnerabilities found"
 
-if [ $( (echo "$auditOutput" | grep -iE 'moderate|critical') ) ]; then
+if [ $( (echo "$auditOutput" | grep -iE "moderate|critical") ) ]; then
     summary=":fire: ALERT! Some vulnerabilites were found! Please check the report details!"
 fi
 

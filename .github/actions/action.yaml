@@ -14,7 +14,6 @@ runs:
     - name: give information
       id: giveinfo
       run: sh my-custom-action.sh "${{ inputs.report }}"
-      # run: ls
       shell: bash
 
 
