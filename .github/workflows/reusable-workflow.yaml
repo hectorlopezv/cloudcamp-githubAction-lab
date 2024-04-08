@@ -49,5 +49,5 @@ jobs:
       #   with:
       #     filePath: ./audit.log
       - name: Print audit report on console
-        run: echo ${{ steps.customAction.outputs.sum-audit }}
+        run: echo ${{ steps.customAction.outputs.audit-summary }}
     needs: [audit]
