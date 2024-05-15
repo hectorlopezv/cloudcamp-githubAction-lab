@@ -6,8 +6,6 @@ on:
 jobs:
   audit:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     outputs:
       audit-report-output: ${{ steps.auditapp.outputs.auditoutput }}
     steps:
@@ -31,8 +29,6 @@ jobs:
           path: ./audit.log
   audit-report:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: write
     steps:
       - name: save audit repository
         uses: actions/download-artifact@v4.1.4

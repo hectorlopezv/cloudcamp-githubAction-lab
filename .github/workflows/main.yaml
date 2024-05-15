@@ -25,6 +25,8 @@ jobs:
   audit:
     uses: ./.github/workflows/reusable_workshop.yaml
     needs: [verify-install]
+    permissions:
+      pull-requests: write
     
     
     ### RUN NPM TEST
