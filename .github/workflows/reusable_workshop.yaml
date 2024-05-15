@@ -1,8 +1,8 @@
-name: GitHub Actions Demo Bootcamp CICD
+name: reusable workflow for audit
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: 
   workflow_call: 
-    
+
 jobs:
   audit:
     runs-on: ubuntu-latest
