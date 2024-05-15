@@ -2,11 +2,6 @@ name: GitHub Actions Demo Bootcamp CICD
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: 
   workflow_dispatch:
-    inputs:
-      enable-audit-report:
-        description: "Enable or disable audit report"
-        type: boolean
-
   pull_request:
     branches: [ "main" ]
 jobs:
@@ -15,25 +10,34 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        nodeversion: [14]
+        nodeversion: [14, 16, 20]
     steps:
       - name: Check out repository code
         uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.nodeversion }}
-          cache: 'npm'
-          cache-dependency-path: _scm_docker_nodejs_app/package-lock.json
       - name: verify packages
         run: cd _scm_docker_nodejs_app/ && npm ci
 
 ### IMPORT REUSABLE WORKFLOW
   audit:
+    runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-    uses: ./.github/workflows/reusable-workflow.yaml
-    with:
-      enable-report: ${{ inputs.enable-audit-report }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - name: Audit App
+        run: cd _scm_docker_nodejs_app/ && npm audit > ../audit.log || exit 0
+      - name: Comment Pr
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: ./audit.log
     needs: [verify-install]
 
 ### RUN NPM TEST
@@ -44,37 +48,8 @@ jobs:
         uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: '14'
+          node-version: '16'
       - name: Testing App
         run: cd _scm_docker_nodejs_app/ && npm test
         continue-on-error: True
     needs: [verify-install]  
-
-### WORKFLOW TO BUILD AND PUSH DOCKER IMAGE
-  build:
-    runs-on: ubuntu-latest
-    permissions: 
-      packages: write
-    env:
-      DOCKER_USER: ${{ github.actor }}
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - name: Login to Github Registry
-        uses: docker/login-action@v1
-        with:
-          registry: ghcr.io
-          username: ${{ env.DOCKER_USER }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-      - run: echo "LC_GITHUB_REPOSITORY=${GITHUB_REPOSITORY,,}" >> ${GITHUB_ENV}
-      - name: Build  Docker image
-        run: |
-          docker build _scm_docker_nodejs_app/ --file _scm_docker_nodejs_app/Dockerfile --tag ghcr.io/$LC_GITHUB_REPOSITORY/dummy:1.0.0
-          # docker build -t hello-world-nodejs-app:1.0.0 . 
-      - name: Push Docker Image
-        run: | 
-          docker push ghcr.io/$LC_GITHUB_REPOSITORY/dummy:1.0.0
-    needs: [audit, test]
-    # needs:
-    #   - audit
-    #   - test
