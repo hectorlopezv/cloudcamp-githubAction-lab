@@ -1,5 +1,49 @@
-name: reusable workshop
-run-name: reusable workshop
-on:
-    push:
-        branches: [ "main" ]
+name: GitHub Actions Demo Bootcamp CICD
+run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
+on: 
+  workflow_call: 
+    
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    outputs:
+      audit-report-output: ${{ steps.auditapp.outputs.auditoutput }}
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '16'
+      - name: Audit App
+        run: cd _scm_docker_nodejs_app/ && npm audit > ../audit.log || exit 0
+      - id: auditapp
+        name: audit app
+        run: |
+          echo "auditoutput<<EOF" >> $GITHUB_OUTPUT
+          echo "$(cat audit.log)" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+      - name: upload audit repository
+        uses: actions/upload-artifact@v4.3.1
+        with:
+          name: audit-report
+          path: ./audit.log
+  audit-report:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: save audit repository
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: audit-report
+      - name: Comment Pr
+        if: github.event_name == 'pull_request'
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          filePath: ./audit.log
+      - name: Print audit report on console
+        run: cat ./audit.log
+    needs: [audit]
+
