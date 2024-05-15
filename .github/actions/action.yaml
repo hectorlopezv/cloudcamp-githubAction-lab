@@ -1,0 +1,15 @@
+name: check audit report
+description: Analyze the audit report and provide feedback
+inputs:
+  report:
+    description: 'Audit report path'
+    required: true
+outputs:
+  sum-audit:
+   description: "print information about report"
+runs:
+  using: composite
+  steps:
+   - name: give information
+     run: myscript.sh ${{ inputs.report }}
+     shell: bash
