@@ -1,7 +1,12 @@
 name: reusable workflow for audit
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: 
-  workflow_call: 
+  workflow_call:
+    inputs:
+        enable-report:
+            description: 'Enable audit report'
+            type: boolean
+            default: true
 
 jobs:
   audit:
@@ -29,6 +34,7 @@ jobs:
           path: ./audit.log
   audit-report:
     runs-on: ubuntu-latest
+    if: ${{ inputs.enable-report }}
     steps:
       - name: save audit repository
         uses: actions/download-artifact@v4.1.4
