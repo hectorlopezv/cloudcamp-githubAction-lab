@@ -1,0 +1,5 @@
+name: reusable workshop
+run-name: reusable workshop
+on:
+    push:
+        branches: [ "main" ]
