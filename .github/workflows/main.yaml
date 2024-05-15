@@ -17,6 +17,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           cache: 'npm'
+          cache-dependency-path: _scm_docker_nodejs_app/package-lock.json
           node-version: ${{ matrix.nodeversion }}
       - name: verify packages
         run: cd _scm_docker_nodejs_app/ && npm ci
